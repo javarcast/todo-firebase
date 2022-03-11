@@ -1,30 +1,24 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <loading-spinner v-if="loading"></loading-spinner>
+  <div v-else>
+    <t-navbar></t-navbar>
+    <div class="container">
+      <router-view/>
+    </div>
+  </div>
 </template>
+<script setup>
+  import TNavbar from '@/components/TNavbar.vue';
+  import LoadingSpinner from '@/components/LoadingSpinner.vue';
+  import { firebase } from '@/utils/firebase';
+import { onMounted, ref } from 'vue';
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+  const loading = ref(false)
 
-nav {
-  padding: 30px;
-}
+  onMounted(async() => {
+    loading.value = true;
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+    await firebase.getCurrentUser();
+    loading.value = false;
+  })
+</script>
